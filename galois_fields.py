@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import List
 import math_util as mu
 import poly_ring as pr
 
@@ -5,46 +7,46 @@ def GF(MOD):
 
     # closure
     class Fp(int):
-        def __new__(self,num):
+        def __new__(self,num:int)->Fp:
             return int.__new__(self,num%MOD)
 
-        def __add__(self,other):
+        def __add__(self,other:Fp)->Fp:
             return Fp(super().__add__(other) % MOD)
 
-        def __sub__(self,other):
+        def __sub__(self,other:Fp)->Fp:
             return Fp(super().__sub__(other) % MOD)
 
-        def __mul__(self,other):
+        def __mul__(self,other:Fp)->Fp:
             return Fp(super().__mul__(other) % MOD)
 
-        def __truediv__(self,other):
+        def __truediv__(self,other:Fp)->Fp:
             return Fp(super().__mul__(pow(other,MOD-2,MOD)) % MOD)
 
-        def inverse(self):
+        def inverse(self)->Fp:
             return pow(self,MOD-2,MOD)
 
         @classmethod 
-        def deg(self):
+        def deg(self)->int:
             return MOD
 
     return Fp
 
 
-def field_extension(Fp,order):
+def field_extension(Fp,order:int):
     PR = pr.poly_ring(Fp)
-    MOD = (1,0,5,4,3)
+    MOD:int = (1,0,5,4,3)
 
     class ExField:
         def __init__(self,coeffs):
-            start = mu.find_non_zero_index(coeffs)
-            self.degree = len(coeffs[start:])-1
-            self.coeffs = tuple(map(Fp,coeffs[start:]))
+            start:int = mu.find_non_zero_index(coeffs)
+            self.degree:int = len(coeffs[start:])-1
+            self.coeffs:tuple[Fp] = tuple(map(Fp,coeffs[start:]))
 
-        def __add__(self, other):
+        def __add__(self, other)->ExField:
             if self.degree != other.degree:
                 self,other = mu.align_coeffs(Fp,self,other)
 
-            res = tuple([x+y for (x,y) in zip(self.coeffs,other.coeffs)])
+            res:tuple = tuple([x+y for (x,y) in zip(self.coeffs,other.coeffs)])
             return ExField(res[mu.find_non_zero_index(res):])
 
         def __sub__(self, other):
