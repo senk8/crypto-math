@@ -1,3 +1,5 @@
+import math_util as mu
+
 def GF(MOD):
 
     # closure
@@ -26,19 +28,10 @@ def GF(MOD):
 
     return Fp
 
-def find_non_zero_index(seq):
-    for i,x in enumerate(seq):
-        if x!=0:
-            return i
-    return len(seq)-1
-
-
 def field_extension(Fp,order):
     MOD = (Fp(1),Fp(0),Fp(5),Fp(4),Fp(3))
 
     class ExField:
-
-
         def __init__(self,coeffs=None):
             assert len(coeffs)==order
             max_degree = order-1
@@ -49,7 +42,7 @@ def field_extension(Fp,order):
                 self.coeffs = tuple(map(Fp,coeffs))
             else :
                 # 初めて０以外が現れるインデックス
-                leading_index = find_non_zero_index(coeffs)
+                leading_index = mu.find_non_zero_index(coeffs)
 
                 self.degree = len(coeffs[leading_index:])-1
                 self.leading_index = max_degree-self.degree
@@ -84,7 +77,6 @@ def field_extension(Fp,order):
             coeffs1 = tuple(reversed(self.coeffs))
             coeffs2 = tuple(reversed(other.coeffs))
 
-
             # 0次元からd次元まで繰り返す
             for k in range(d+1):
                 # 例えば、新しい多項式の3次の係数はa_3b_0+a_0b_3+a_2b_1+a_1b_2となるのでa_ib_k-iで計算する。
@@ -98,6 +90,84 @@ def field_extension(Fp,order):
 
             new_coeffs = ExField.mod(tuple(reversed(new_coeffs)),MOD)
             return ExField(new_coeffs)
+
+        def __eq__(self, other):
+            if self.degree != other.degree:
+                return False
+            else:
+                return all([ x==y for x ,y in zip(self.coeffs,other.coeffs)])
+        
+        def __neq__(self, other):
+            return not (self == other)
+
+        def __str__(self):
+            s = ""
+            for d,x in enumerate(reversed(self.coeffs)):
+                if x == 0 :
+                    if self.degree==0:
+                        s+=str(x)
+                        break
+                    else:
+                        continue
+
+                if d != 0:
+                    s = f"+{x}x^{d}" + s
+                else:
+                    s = "+" + str(x) + s
+
+            return s.lstrip("+")
+
+        def monic(self):
+            if self.is_monic():
+                return self
+            else :
+                e = self.coeffs[self.leading_index].inverse()
+                return ExField([ e*x for x in self.coeffs ])
+
+        def is_monic(self):
+            return self.coeffs[self.leading_index]==1
+
+        def is_zero(self):
+            return self == ExField.zero()
+
+        def is_one(self):
+            return self == ExField.one()
+
+        '''
+        def inverse(self):
+            print(ExField.mod_init(MOD))
+            gcd, e, f = ExField.ext_euclid(self,MOD)
+            if not gcd.is_one():
+                print(f"GCD is not exist:{gcd},{e},{f}")
+                return ExField.zero()
+            else:
+                return e
+        '''
+
+        @classmethod
+        def zero(cls):
+            return cls([0]*order)
+
+        @classmethod
+        def one(cls):
+            return cls([0]*(order-1)+[1])
+
+        
+    return ExField
+
+
+
+
+if __name__ == "__main__":
+    print(0)
+
+
+
+'''
+        def shift_degree(self,i):
+            assert self.degree+i<order 
+            shifted = self.coeffs[i:]+(0,)*i
+            return ExField(list(shifted))
 
         def __mod__(self, other):
             reminder = self
@@ -132,63 +202,6 @@ def field_extension(Fp,order):
                 reminder = reminder - temp
             
             return division
-
-        def __eq__(self, other):
-            if self.degree != other.degree:
-                return False
-            else:
-                return all([ x==y for x ,y in zip(self.coeffs,other.coeffs)])
-        
-        def __neq__(self, other):
-            return not (self == other)
-
-        def __str__(self):
-            s = ""
-            for d,x in enumerate(reversed(self.coeffs)):
-                if x == 0 :
-                    if self.degree==0:
-                        s+=str(x)
-                        break
-                    else:
-                        continue
-
-                if d != 0:
-                    s = f"+{x}x^{d}" + s
-                else:
-                    s = "+" + str(x) + s
-
-            return s.lstrip("+")
-
-        def shift_degree(self,i):
-            assert self.degree+i<order 
-            shifted = self.coeffs[i:]+(0,)*i
-            return ExField(list(shifted))
-
-        def monic(self):
-            if self.is_monic():
-                return self
-            else :
-                e = self.coeffs[self.leading_index].inverse()
-                return ExField([ e*x for x in self.coeffs ])
-
-        def is_monic(self):
-            return self.coeffs[self.leading_index]==1
-
-        def is_zero(self):
-            return self == ExField.zero()
-
-        def is_one(self):
-            return self == ExField.one()
-
-        def inverse(self):
-            print(ExField.mod_init(MOD))
-            gcd, e, f = ExField.ext_euclid(self,MOD)
-            if not gcd.is_one():
-                print(f"GCD is not exist:{gcd},{e},{f}")
-                return ExField.zero()
-            else:
-                return e
-
         #MODは次元が上限を超えるため、modを分ける必要があった。
         @classmethod
         def mod(cls,coeffs,m):
@@ -201,8 +214,8 @@ def field_extension(Fp,order):
             # m次元多項式をn次元多項式未満の次元になるまで割り算する.よってm-n+1回割り算する。
             #for i in reversed(range((len(coeffs)-1)-order+1)):
 
-            lr=find_non_zero_index(reminder)
-            lp=find_non_zero_index(poly)
+            lr=math_util.find_non_zero_index(reminder)
+            lp=math_util.find_non_zero_index(poly)
 
             # polyの次数以下となったらループを終了
             while lr<=lp:
@@ -214,7 +227,7 @@ def field_extension(Fp,order):
                 # 計算した商を引いて、余りを求める
                 reminder = tuple([x-y for x,y in zip(reminder,temp)])
 
-                lr=find_non_zero_index(reminder)
+                lr=math_util.find_non_zero_index(reminder)
 
             
             return  reminder[len(reminder)-order:]
@@ -228,8 +241,8 @@ def field_extension(Fp,order):
             reminder = coeffs
             poly = (len(coeffs)-len(m)) * (Fp(0),) + m
 
-            lr=find_non_zero_index(reminder)
-            lp=find_non_zero_index(poly)
+            lr=math_util.find_non_zero_index(reminder)
+            lp=math_util.find_non_zero_index(poly)
 
             # polyの次数以下となったらループを終了
             while lr<=lp:
@@ -246,23 +259,6 @@ def field_extension(Fp,order):
             
             return  quotient[len(quotient)-order:] 
 
-
-        @classmethod
-        def zero(cls):
-            return cls([0]*order)
-
-        @classmethod
-        def one(cls):
-            return cls([0]*(order-1)+[1])
-
-        @classmethod
-        def gcd(cls,lhs,rhs):
-            if rhs.is_zero():
-                return lhs.monic()
-
-            reminder = lhs % rhs
-            return cls.gcd(rhs ,reminder)
-        
         @classmethod
         def ext_euclid(cls,a,b):
             x = cls.one()
@@ -287,10 +283,12 @@ def field_extension(Fp,order):
             return a.monic(),x.monic(),y.monic()
             #return b.monic(),nx.monic(),ny.monic()
 
-    return ExField
+        @classmethod
+        def gcd(cls,lhs,rhs):
+            if rhs.is_zero():
+                return lhs.monic()
 
+            reminder = lhs % rhs
+            return cls.gcd(rhs ,reminder)
 
-
-
-if __name__ == "__main__":
-    print(0)
+'''

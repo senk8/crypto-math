@@ -1,4 +1,4 @@
-from src.galois_fields import GF,field_extension
+from galois_fields import GF,field_extension
 
 def test_add():
     F7 = GF(7)
