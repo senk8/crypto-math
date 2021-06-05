@@ -1,21 +1,23 @@
 import math_util as mu
+import copy as cp
 
 def poly_ring(Fp):
     class PolyRing :
         def __init__(self,coeffs):
-            self.degree = len(coeffs)-1
-            self.coeffs = tuple(map(Fp,coeffs))
+            start = mu.find_non_zero_index(coeffs)
+            self.degree = len(coeffs[start:])-1
+            self.coeffs = tuple(map(Fp,coeffs[start:]))
         
         def __add__(self, other):
             if self.degree != other.degree:
-                self,other = self.align_coeffs(other)
+                self,other = mu.align_coeffs(Fp,self,other)
 
             res = tuple([x+y for (x,y) in zip(self.coeffs,other.coeffs)])
             return PolyRing(res[mu.find_non_zero_index(res):])
 
         def __sub__(self, other):
             if self.degree != other.degree:
-                self,other = self.align_coeffs(other)
+                self,other = mu.align_coeffs(Fp,self,other)
 
             res = tuple([x-y for (x,y) in zip(self.coeffs,other.coeffs)])
             return PolyRing(res[mu.find_non_zero_index(res):])
@@ -59,21 +61,12 @@ def poly_ring(Fp):
                     s = "+" + str(x) + s
 
             return s.lstrip("+")
-        
-        def align_coeffs(self,other):
-            if self.degree == other.degree:
-                return self,other
-            elif self.degree < other.degree:
-                return PolyRing((other.degree-self.degree)*(Fp(0),)+self.coeffs),other
-            else:
-                return self,PolyRing((self.degree-other.degree)*(Fp(0),)+other.coeffs)
 
         def monic(self):
             if self.is_monic():
                 return self
             else :
-                e = self.coeffs[0].inverse()
-                return PolyRing([ e*x for x in self.coeffs ])
+                return self * PolyRing([self.coeffs[0].inverse()])
 
         def is_monic(self):
             return self.coeffs[0]==1

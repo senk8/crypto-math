@@ -9,6 +9,10 @@ def test_add():
     y = R7([2,3,1])
     z = R7([6,1,3,1])
 
+    print(x.coeffs)
+    print(y.coeffs)
+
+    print((x+y).coeffs)
     assert x+y == R7([1,3,4,2])
     assert x+z == R7([2,4,2])
     assert y+z == R7([6,3,6,2])
