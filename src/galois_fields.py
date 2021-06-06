@@ -44,15 +44,13 @@ def GF(MOD):
     return Fp
 
 
-def field_extension(Fp,order:int):
+def field_extension(Fp,ord:int):
     PR = pr.poly_ring(Fp)
     MOD:int = (1,0,5,4,3)
 
-    class ExField:
+    class ExField(PR):
         def __init__(self,coeffs):
-            start:int = mu.find_non_zero_index(coeffs)
-            self.degree:int = len(coeffs[start:])-1
-            self.coeffs:tuple[Fp] = tuple(map(Fp,coeffs[start:]))
+            super().__init__(coeffs)
 
         def __add__(self, other)->ExField:
             if self.degree != other.degree:
@@ -73,28 +71,16 @@ def field_extension(Fp,order:int):
 
             new_coeffs = [Fp(0)]*(d+1)
 
-            coeffs1 = tuple(reversed(self.coeffs))
-            coeffs2 = tuple(reversed(other.coeffs))
-
             for k in range(d+1):
                 for i in range(k+1):
-                    if len(coeffs1) <= i or len(coeffs2) <= k - i:
+                    if self.degree-i < 0 or other.degree- (k - i) < 0:
                         continue
+                    
+                    new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
 
-                    new_coeffs[k] += coeffs1[i] * coeffs2[k-i]
-
-            _,r = PR.division(PR(tuple(reversed(new_coeffs))),PR(MOD))
+            _,r = PR.division(PR(tuple(new_coeffs)),PR(MOD))
             return ExField(r.coeffs)
 
-        def __eq__(self, other):
-            if self.degree != other.degree:
-                return False
-            else:
-                return all([ x==y for x ,y in zip(self.coeffs,other.coeffs)])
-        
-        def __neq__(self, other):
-            return not (self == other)
-        
         def __pow__(self, other):
             if other == 0:
                 return ExField.one()
@@ -102,23 +88,6 @@ def field_extension(Fp,order:int):
                 for i in range(other):
                     self=self*self
                 return self
-
-        def __str__(self):
-            s = ""
-            for d,x in enumerate(reversed(self.coeffs)):
-                if x == 0 :
-                    if self.degree==0:
-                        s+=str(x)
-                        break
-                    else:
-                        continue
-
-                if d != 0:
-                    s = f"+{x}x^{d}" + s
-                else:
-                    s = "+" + str(x) + s
-
-            return s.lstrip("+")
 
         def inverse(self):
             gcd, e, f = PR.ext_euclid(self,ExField(MOD))
@@ -133,9 +102,6 @@ def field_extension(Fp,order:int):
             else :
                 return self * ExField([self.coeffs[0].inverse()])
 
-        def is_monic(self):
-            return self.coeffs[0]==1
-        
         def is_zero(self):
             return self == ExField.zero()
 
@@ -145,20 +111,16 @@ def field_extension(Fp,order:int):
         @classmethod
         def enumerate(self):
             import itertools
-            return itertools.product(range(Fp.degree()),repeat=order)
+            return itertools.product(range(Fp.degree()),repeat=ExField.order())
 
         @classmethod
         def cardinality(cls):
-            return Fp.degree()**order
+            return Fp.degree()**cls.order()
+
+        @classmethod
+        def order(cls):
+            return ord
         
-        @classmethod
-        def zero(cls):
-            return cls((0,))
-
-        @classmethod
-        def one(cls):
-            return cls((1,))
-
         
     return ExField
 

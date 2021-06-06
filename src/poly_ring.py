@@ -26,23 +26,23 @@ def poly_ring(Fp):
 
             new_coeffs = [Fp(0)]*(d+1)
 
-            coeffs1 = tuple(reversed(self.coeffs))
-            coeffs2 = tuple(reversed(other.coeffs))
-
             for k in range(d+1):
                 for i in range(k+1):
-                    if len(coeffs1) <= i or len(coeffs2) <= k - i:
+                    if self.degree-i < 0 or other.degree- (k - i) < 0:
                         continue
+                    
+                    new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
 
-                    new_coeffs[k] += coeffs1[i] * coeffs2[k-i]
-
-            return PolyRing(tuple(reversed(new_coeffs)))
+            return PolyRing(new_coeffs)
         
         def __eq__(self, other):
             if self.degree != other.degree:
                 return False
             else:
                 return all([ x==y for x ,y in zip(self.coeffs,other.coeffs)])
+
+        def __neq__(self, other):
+            return not (self == other)
         
         def __str__(self):
             s = ""
@@ -61,6 +61,15 @@ def poly_ring(Fp):
 
             return s.lstrip("+")
 
+        
+        def __pow__(self, other):
+            if other == 0:
+                return PolyRing.one()
+            else:
+                for i in range(other):
+                    self=self*self
+                return self
+
         def monic(self):
             if self.is_monic():
                 return self
@@ -75,7 +84,7 @@ def poly_ring(Fp):
 
         def is_one(self):
             return self == PolyRing.one()
-        
+
         @classmethod
         def zero(cls):
             return cls((0,))
