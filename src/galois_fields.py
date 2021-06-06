@@ -1,7 +1,10 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Tuple
 import math_util as mu
 import poly_ring as pr
+
+MODS = [(1),(1),(1,1,1),(1,0,1,1),(1,0,0,1,1),(1,0,0,1,0,1),(1,0,1,1,0,1,1),(1,0,0,0,0,0,1,1),(1,0,0,0,1,1,1,0,1)]
+#MODS = [(1),(1,1),(1,1,1),(1,0,1,1),(1,0,5,4,3),(1,0,0,1,0,1),(1,0,0,0,1,1,1,0,1)]
 
 def GF(MOD):
 
@@ -20,10 +23,16 @@ def GF(MOD):
             return Fp(super().__mul__(other) % MOD)
 
         def __truediv__(self,other:Fp)->Fp:
-            return Fp(super().__mul__(pow(other,MOD-2,MOD)) % MOD)
+            return Fp(super().__mul__(pow(other,MOD-2)) % MOD)
+
+        def __pow__(self, exp):
+            res=Fp(1)
+            for _ in range(exp):
+                res=res*self
+            return res 
 
         def inverse(self)->Fp:
-            return pow(self,MOD-2,MOD)
+            return pow(self,MOD-2)
 
         @classmethod
         def degree(cls)->int:
@@ -46,7 +55,8 @@ def GF(MOD):
 
 def field_extension(Fp,ord:int):
     PR = pr.poly_ring(Fp)
-    MOD:int = (1,0,5,4,3)
+    #MOD:int = (1,0,5,4,3)
+    MOD:Tuple[int] =MODS[ord]
 
     class ExField(PR):
         def __init__(self,coeffs):
@@ -80,14 +90,15 @@ def field_extension(Fp,ord:int):
 
             _,r = PR.division(PR(tuple(new_coeffs)),PR(MOD))
             return ExField(r.coeffs)
+        
+        def __truediv__(self,other)->Fp:
+            return self*other.inverse()
 
-        def __pow__(self, other):
-            if other == 0:
-                return ExField.one()
-            else:
-                for i in range(other):
-                    self=self*self
-                return self
+        def __pow__(self, exp):
+            res=ExField.one()
+            for _ in range(exp):
+                res=res*self
+            return res 
 
         def inverse(self):
             gcd, e, f = PR.ext_euclid(self,ExField(MOD))
