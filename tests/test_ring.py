@@ -1,3 +1,7 @@
+import os
+os.environ["PYTHONPATH"]=os.getcwd()+"/src/"
+print(os.environ["PYTHONPATH"])
+
 from galois_fields import GF
 from poly_ring import poly_ring
 

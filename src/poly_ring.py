@@ -1,5 +1,4 @@
 import math_util as mu
-import copy as cp
 
 def poly_ring(Fp):
     class PolyRing :
