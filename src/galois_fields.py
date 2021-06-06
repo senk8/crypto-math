@@ -49,6 +49,18 @@ def GF(MOD):
         @classmethod
         def enumerate(cls)->int:
             return range(MOD)
+        
+        @classmethod
+        def generator(cls)->Fp:
+            for g in range(1,MOD):
+                g_ = cls(g)
+                # MOD-1まで1にならなければ
+                for i in range(1,MOD-1):
+                    if g_**i == cls.one():
+                        break
+                    if i == MOD-2:
+                        return g_
+                
 
     return Fp
 
