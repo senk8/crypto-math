@@ -25,9 +25,21 @@ def GF(MOD):
         def inverse(self)->Fp:
             return pow(self,MOD-2,MOD)
 
-        @classmethod 
-        def deg(self)->int:
+        @classmethod
+        def degree(cls)->int:
             return MOD
+
+        @classmethod
+        def zero(cls):
+            return cls(0)
+
+        @classmethod
+        def one(cls):
+            return cls(1)
+        
+        @classmethod
+        def enumerate(cls)->int:
+            return range(MOD)
 
     return Fp
 
@@ -82,6 +94,14 @@ def field_extension(Fp,order:int):
         
         def __neq__(self, other):
             return not (self == other)
+        
+        def __pow__(self, other):
+            if other == 0:
+                return ExField.one()
+            else:
+                for i in range(other):
+                    self=self*self
+                return self
 
         def __str__(self):
             s = ""
@@ -121,6 +141,15 @@ def field_extension(Fp,order:int):
 
         def is_one(self):
             return self == ExField.one()
+
+        @classmethod
+        def enumerate(self):
+            import itertools
+            return itertools.product(range(Fp.degree()),repeat=order)
+
+        @classmethod
+        def cardinality(cls):
+            return Fp.degree()**order
         
         @classmethod
         def zero(cls):

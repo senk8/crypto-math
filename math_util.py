@@ -1,12 +1,14 @@
+from __future__ import annotations
 import copy as cp
+from typing import Tuple
 
-def find_non_zero_index(seq):
+def find_non_zero_index(seq)->int:
     for i,x in enumerate(seq):
         if x!=0:
             return i
     return len(seq)-1
 
-def align_coeffs(Fp,arg1,arg2):
+def align_coeffs(Fp,arg1,arg2)->Tuple[Tuple[int],Tuple[int]]:
 
     if arg1.degree < arg2.degree:
         arg1 = cp.deepcopy(arg1)
