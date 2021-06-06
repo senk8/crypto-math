@@ -94,6 +94,10 @@ def poly_ring(Fp):
             return cls((1,))
 
         @classmethod
+        def base(cls):
+            return Fp.degree()
+
+        @classmethod
         def division(cls,lhs,rhs):
             if lhs.degree<rhs.degree:
                 return cls.zero(),lhs
