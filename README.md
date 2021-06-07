@@ -1,3 +1,14 @@
 # crypto-math
 
-set `PYTHONPATH` to `/src`
+This is a full-scratch implementation of an algebraic structure for cryptology.
+
+
+# setup
+
+
+```
+$ export PYTHONPATH = cypto-math/src
+$ pytest 
+```
+
+
