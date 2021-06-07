@@ -67,8 +67,8 @@ def GF(MOD):
 
 def field_extension(Fp,ord:int):
     PR = pr.poly_ring(Fp)
-    #MOD:int = (1,0,5,4,3)
-    MOD:Tuple[int] =MODS[ord]
+    MOD:int = (1,0,5,4,3)
+    #MOD:Tuple[int] =MODS[ord]
 
     class ExField(PR):
         def __init__(self,coeffs):
