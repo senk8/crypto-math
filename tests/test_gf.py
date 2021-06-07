@@ -63,18 +63,15 @@ def test_div(setup,x,y,expect):
 
     assert x/y == F7_4(expect)
 
-
-def test_inverse(setup):
+@pytest.mark.parametrize('x',[
+    ([1,1,1,1]),
+    ([2,3,1]),
+    ([6,1,3,1]),
+])
+def test_inverse(setup,x):
     F7_4 = setup
-    f = lambda x,y:x.inverse()*y
-
-    x = F7_4([1,1,1,1])
-    y = F7_4([6,0,0,6])
-    z = F7_4([2,3,1])
-
-    assert (x*y).is_one()
-    assert (x*x.inverse()).is_one()
-    assert (z*z.inverse()).is_one()
+    x = F7_4(x)
+    assert x*x.inverse() == F7_4([1])
 
 @pytest.mark.parametrize('x,e',[
     ([1,1,1,1],3),
