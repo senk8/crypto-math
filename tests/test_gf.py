@@ -34,48 +34,38 @@ def test_sub(setup,x,y,expect):
 
     assert x-y == F7_4(expect)
 
-def test_mul():
-    F7 = GF(7)
-    F7_4 = field_extension(F7,4)
+@pytest.mark.parametrize('x,y,expect',[
+    ([1,1,0],[3,2],[3,5,2,0]),
+    ([1,1],[1,3,6],[1,4,2,6]),
+    ([1,1,1,1],[2,3,1],[3,1,6,0]),
+    ([2,3,1],[6,1,3,1],[4,4,2,4]),
+    ([1,1,1,1],[6,1,3,1],[1,3,0,5]),
+    ([1,1,1,1],[0],[0]),
+])
+def test_mul(setup,x,y,expect):
+    F7_4 = setup
 
-    a = F7_4([1,1,0])
-    b = F7_4([3,2])
-    except1 = F7_4([3,5,2,0])
+    x = F7_4(x)
+    y = F7_4(y)
+    
+    assert x*y == F7_4(expect)
 
-    assert a*b == except1
+@pytest.mark.parametrize('x,y,expect',[
+    ([1,1,1,1],[2,3,1],[2,6,4,6]),
+    ([2,3,1],[6,1,3,1],[0,6,5,4]),
+    ([1,1,1,1],[6,1,3,1],[2,5,1,5]),
+])
+def test_div(setup,x,y,expect):
+    F7_4 = setup
 
-    a = F7_4([1,1])
-    b = F7_4([1,3,6])
-    except1 = F7_4([1,4,2,6])
+    x = F7_4(x)
+    y = F7_4(y)
 
-    assert a*b == except1
-
-    x = F7_4([1,1,1,1])
-    y = F7_4([2,3,1])
-    z = F7_4([6,1,3,1])
-
-    assert x*y == F7_4([3,1,6,0])
-    assert y*z == F7_4([4,4,2,4])
-    assert x*z == F7_4([1,3,0,5])
-
-    assert (x*F7_4.zero()).is_zero()
-
-def test_div():
-    F7 = GF(7)
-    F7_4 = field_extension(F7,4)
-
-    x = F7_4([1,1,1,1])
-    y = F7_4([2,3,1])
-    z = F7_4([6,1,3,1])
-
-    assert x/y == F7_4([2,6,4,6])
-    assert y/z == F7_4([0,6,5,4])
-    assert x/z == F7_4([2,5,1,5])
+    assert x/y == F7_4(expect)
 
 
-def test_inverse():
-    F7 = GF(7)
-    F7_4 = field_extension(F7,4)
+def test_inverse(setup):
+    F7_4 = setup
     f = lambda x,y:x.inverse()*y
 
     x = F7_4([1,1,1,1])
@@ -86,17 +76,22 @@ def test_inverse():
     assert (x*x.inverse()).is_one()
     assert (z*z.inverse()).is_one()
 
-def test_pow():
-    F7 = GF(7)
-    F7_4 = field_extension(F7,4)
+@pytest.mark.parametrize('x,e',[
+    ([1,1,1,1],3),
+    ([2,3,1],3),
+    ([6,1,3,1],3),
+    ([6,1,3,1],0),
+    ([6,1,3,1],1),
+])
+def test_pow(setup,x,e):
+    F7_4 = setup
 
-    x = F7_4([1,1,1,1])
-    y = F7_4([6,0,0,6])
-    z = F7_4([2,3,1])
+    x = F7_4(x)
+    a = F7_4.one()
 
-    print(x**2)
-    print(x*x)
-    assert x**2 == x*x
-    assert x**3 == x*x*x
+    for _ in range(e):
+        a*=x
+
+    assert x**e == a
 
 
