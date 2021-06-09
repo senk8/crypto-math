@@ -1,4 +1,6 @@
+from cmath import isclose
 import math_util as mu
+import fft
 
 def poly_ring(Fp):
     class PolyRing :
@@ -22,6 +24,12 @@ def poly_ring(Fp):
             return PolyRing(res[mu.find_non_zero_index(res):])
 
         def __mul__(self, other):
+            return PolyRing(self.multiply_conv(other))
+       
+        def multiply_fft(self,other):
+            return tuple(reversed(fft.fast_fourier_transform(tuple(reversed(self.coeffs)),tuple(reversed(other.coeffs)))))
+
+        def multiply_conv(self,other):
             d = self.degree+other.degree
 
             new_coeffs = [Fp(0)]*(d+1)
@@ -32,8 +40,11 @@ def poly_ring(Fp):
                         continue
                     
                     new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
+            
+            return new_coeffs
 
-            return PolyRing(new_coeffs)
+
+
         
         def __eq__(self, other):
             if self.degree != other.degree:

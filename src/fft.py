@@ -31,12 +31,15 @@ def fast_fourier_transform(g,h):
     f_ = tuple([ g_[i]*h_[i] for i in range(n) ])
     res = inverse_discrete_fourier_transform(f_,n)
 
-    return res[:dg+dh+1]
+    # epilogue
+    formarize_and_rouded = tuple([ round((i*1/n).real) for i in res[:dg+dh+1]])
+
+    return formarize_and_rouded
 
 def discrete_fourier_transform(poly, n):
     if n==1:
         assert len(poly)==1
-        # １の一乘根は１なのでそのまま返す
+        # The root of n to the power of 1 is 1, so
         return poly
     
     # f0 and f1 are coeffs
@@ -54,7 +57,7 @@ def discrete_fourier_transform(poly, n):
     
     return new_poly
 
-def rec(poly,n):
+def inverse_discrete_fourier_transform(poly,n):
     if n==1:
         assert len(poly)==1
         return poly
@@ -62,13 +65,11 @@ def rec(poly,n):
     f0 = [ poly[2*i] for i in range(n//2)]
     f1 = [ poly[2*i+1] for i in range(n//2)]
 
-    f0 = rec(f0, n//2)
-    f1 = rec(f1, n//2)
+    f0 = inverse_discrete_fourier_transform(f0, n//2)
+    f1 = inverse_discrete_fourier_transform(f1, n//2)
 
     unity = get_unity(n)**(-1)
     new_poly = [ f0[i%(n//2)]+(unity**i)*f1[i%(n//2)] for i in range(n)]
     return new_poly
 
-def inverse_discrete_fourier_transform(poly,n):
-    return [ i*1/n for i in rec(poly,n)]
 

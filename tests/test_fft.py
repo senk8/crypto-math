@@ -1,10 +1,7 @@
 
 import cmath
-from numpy.lib.polynomial import poly
 import pytest
 import fft
-import t_fft
-import numpy as np
 
 @pytest.mark.parametrize('m',[
     1,2,3,4,5,6,7,8,9,10
@@ -14,25 +11,22 @@ def test_unity(m):
     unity = fft.get_unity(m)
     assert cmath.isclose(unity**m,1.0+0j)
 
-def test_dft():
-    n = 8 
-    m = 7
-    g =(1,2,3)
-    h =(2,3,2)
+@pytest.mark.parametrize('g,n',[
+    ((1,2,3),8),
+    ((2,3,2),8)
+])
+def test_dft(g,n):
+    m = n-1
 
     actual=fft.discrete_fourier_transform(fft.padding(g,m),n)
     actual=fft.inverse_discrete_fourier_transform(actual,n)
+    actual = tuple([ round((i*1/n).real) for i in actual[:len(g)]])
 
-    print(actual)
-    #actual = [i/n for i in actual]
+    assert actual == g
 
-    assert all([ cmath.isclose(x,y) for x,y in zip(actual[:3],g)])
-
-def test_fft():
-    g =(1,2,3)
-    h =(2,3,2)
-
+@pytest.mark.parametrize('g,h,expect',[
+    ((1,2,3),(2,3,2),(2,7,14,13,6))
+])
+def test_fft(g,h,expect):
     actual=fft.fast_fourier_transform(g,h)
-    expect=(2,7,14,13,6)
-
-    assert all([ cmath.isclose(x,y) for x,y in zip(actual,expect)])
+    assert actual==expect
