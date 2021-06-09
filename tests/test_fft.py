@@ -3,6 +3,7 @@ import cmath
 from numpy.lib.polynomial import poly
 import pytest
 import fft
+import t_fft
 import numpy as np
 
 @pytest.mark.parametrize('m',[
@@ -20,9 +21,12 @@ def test_dft():
     h =(2,3,2)
 
     actual=fft.discrete_fourier_transform(fft.padding(g,m),n)
-    expect=fft.test_discrete_fourier_transform(fft.padding(g,m),n)
+    actual=fft.inverse_discrete_fourier_transform(actual,n)
 
-    assert actual==expect
+    print(actual)
+    #actual = [i/n for i in actual]
+
+    assert all([ cmath.isclose(x,y) for x,y in zip(actual[:3],g)])
 
 def test_fft():
     g =(1,2,3)
