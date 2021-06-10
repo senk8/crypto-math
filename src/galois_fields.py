@@ -4,7 +4,6 @@ import math_util as mu
 import poly_ring as pr
 
 MODS = [(1),(1),(1,1,1),(1,0,1,1),(1,0,0,1,1),(1,0,0,1,0,1),(1,0,1,1,0,1,1),(1,0,0,0,0,0,1,1),(1,0,0,0,1,1,1,0,1)]
-#MODS = [(1),(1,1),(1,1,1),(1,0,1,1),(1,0,5,4,3),(1,0,0,1,0,1),(1,0,0,0,1,1,1,0,1)]
 
 def GF(MOD):
 
@@ -37,6 +36,10 @@ def GF(MOD):
         @classmethod
         def degree(cls)->int:
             return MOD
+
+        @classmethod
+        def cardinality(cls)->int:
+            return cls.degree()
 
         @classmethod
         def zero(cls):
@@ -75,18 +78,23 @@ def field_extension(Fp,ord:int):
             super().__init__(coeffs)
 
         def __add__(self, other)->ExField:
-            if self.degree != other.degree:
-                self,other = mu.align_coeffs(Fp,self,other)
-
-            res:tuple = tuple([x+y for (x,y) in zip(self.coeffs,other.coeffs)])
+            if self.degree < other.degree:
+                filled=mu.padding(self.coeffs,other.degree,Fp)
+                res = tuple([x+y for (x,y) in zip(filled,other.coeffs)])
+            else :
+                filled=mu.padding(other.coeffs,self.degree,Fp)
+                res = tuple([x+y for (x,y) in zip(self.coeffs,filled)])
             return ExField(res[mu.find_non_zero_index(res):])
 
         def __sub__(self, other):
-            if self.degree != other.degree:
-                self,other = mu.align_coeffs(Fp,self,other)
-
-            res = tuple([x-y for (x,y) in zip(self.coeffs,other.coeffs)])
+            if self.degree < other.degree:
+                filled=mu.padding(self.coeffs,other.degree,Fp)
+                res = tuple([x-y for (x,y) in zip(filled,other.coeffs)])
+            else :
+                filled=mu.padding(other.coeffs,self.degree,Fp)
+                res = tuple([x-y for (x,y) in zip(self.coeffs,filled)])
             return ExField(res[mu.find_non_zero_index(res):])
+
 
         def __mul__(self, other):
             d = self.degree+other.degree

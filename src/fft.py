@@ -1,9 +1,5 @@
-from numpy.lib.polynomial import poly
 import math_util as mu
 import cmath
-
-def f(poly,x,n):
-    return sum([ c*x**i for i,c in zip(range(n),poly)])
 
 def get_unity(n)->complex:
     unity:complex = complex(cmath.cos(2*cmath.pi/n),cmath.sin(2*cmath.pi/n))
@@ -12,6 +8,7 @@ def get_unity(n)->complex:
 def padding(poly,m,Fp=int):
     deg = len(poly)-1
     if deg < m:
+        #return poly + (m-deg) * (Fp(0),)
         return poly + (m-deg) * (Fp(0),)
     else :
         return poly

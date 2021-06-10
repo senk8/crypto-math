@@ -1,6 +1,6 @@
-from cmath import isclose
 import math_util as mu
 import fft
+from functools import lru_cache
 
 def poly_ring(Fp):
     class PolyRing :
@@ -8,19 +8,23 @@ def poly_ring(Fp):
             start = mu.find_non_zero_index(coeffs)
             self.degree = len(coeffs[start:])-1
             self.coeffs = tuple(map(Fp,coeffs[start:]))
-        
+ 
         def __add__(self, other):
-            if self.degree != other.degree:
-                self,other = mu.align_coeffs(Fp,self,other)
-
-            res = tuple([x+y for (x,y) in zip(self.coeffs,other.coeffs)])
+            if self.degree < other.degree:
+                filled=mu.padding(self.coeffs,other.degree,Fp)
+                res = tuple([x+y for (x,y) in zip(filled,other.coeffs)])
+            else :
+                filled=mu.padding(other.coeffs,self.degree,Fp)
+                res = tuple([x+y for (x,y) in zip(self.coeffs,filled)])
             return PolyRing(res[mu.find_non_zero_index(res):])
 
         def __sub__(self, other):
-            if self.degree != other.degree:
-                self,other = mu.align_coeffs(Fp,self,other)
-
-            res = tuple([x-y for (x,y) in zip(self.coeffs,other.coeffs)])
+            if self.degree < other.degree:
+                filled=mu.padding(self.coeffs,other.degree,Fp)
+                res = tuple([x-y for (x,y) in zip(filled,other.coeffs)])
+            else :
+                filled=mu.padding(other.coeffs,self.degree,Fp)
+                res = tuple([x-y for (x,y) in zip(self.coeffs,filled)])
             return PolyRing(res[mu.find_non_zero_index(res):])
 
         def __mul__(self, other):
