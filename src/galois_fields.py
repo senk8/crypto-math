@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import List, Tuple
 import math_util as mu
 import poly_ring as pr
+from functools import lru_cache
 
 MODS = [(1),(1),(1,1,1),(1,0,1,1),(1,0,0,1,1),(1,0,0,1,0,1),(1,0,1,1,0,1,1),(1,0,0,0,0,0,1,1),(1,0,0,0,1,1,1,0,1)]
 
@@ -50,7 +50,7 @@ def GF(MOD):
             return cls(1)
         
         @classmethod
-        def enumerate(cls)->int:
+        def enumerate(cls):
             return range(MOD)
         
         @classmethod
@@ -95,7 +95,7 @@ def field_extension(Fp,ord:int):
                 res = tuple([x-y for (x,y) in zip(self.coeffs,filled)])
             return ExField(res[mu.find_non_zero_index(res):])
 
-
+        @lru_cache(maxsize=4096)
         def __mul__(self, other):
             d = self.degree+other.degree
 
@@ -114,6 +114,7 @@ def field_extension(Fp,ord:int):
         def __truediv__(self,other)->Fp:
             return self*other.inverse()
 
+        @lru_cache(maxsize=100)
         def __pow__(self, exp):
             res=ExField.one()
             for _ in range(exp):
@@ -140,9 +141,9 @@ def field_extension(Fp,ord:int):
             return self == ExField.one()
 
         @classmethod
-        def enumerate(self):
+        def enumerate(cls):
             import itertools
-            return itertools.product(range(Fp.degree()),repeat=ExField.order())
+            return itertools.product(range(Fp.degree()),repeat=cls.order())
 
         @classmethod
         def cardinality(cls):
@@ -151,7 +152,10 @@ def field_extension(Fp,ord:int):
         @classmethod
         def order(cls):
             return ord
-        
+
+        @classmethod
+        def p(cls):
+            return Fp.degree()
         
     return ExField
 

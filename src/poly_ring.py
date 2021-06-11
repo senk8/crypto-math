@@ -5,9 +5,7 @@ from functools import lru_cache
 def poly_ring(Fp):
     class PolyRing :
         def __init__(self,coeffs):
-            start = mu.find_non_zero_index(coeffs)
-            self.degree = len(coeffs[start:])-1
-            self.coeffs = tuple(map(Fp,coeffs[start:]))
+            self.coeffs,self.degree  = PolyRing.preprocess(coeffs,Fp)
  
         def __add__(self, other):
             if self.degree < other.degree:
@@ -46,9 +44,6 @@ def poly_ring(Fp):
                     new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
             
             return new_coeffs
-
-
-
         
         def __eq__(self, other):
             if self.degree != other.degree:
@@ -77,6 +72,7 @@ def poly_ring(Fp):
             return s.lstrip("+")
 
         
+        @lru_cache(maxsize=100)
         def __pow__(self, other):
             if other == 0:
                 return PolyRing.one()
@@ -101,6 +97,12 @@ def poly_ring(Fp):
             return self == PolyRing.one()
 
         @classmethod
+        @lru_cache(maxsize=4096)
+        def preprocess(cls,coeffs,Fp):
+            start = mu.find_non_zero_index(coeffs)
+            return tuple([Fp(x) for x in coeffs[start:]]),len(coeffs[start:])-1
+
+        @classmethod
         def zero(cls):
             return cls((0,))
 
@@ -109,7 +111,7 @@ def poly_ring(Fp):
             return cls((1,))
 
         @classmethod
-        def base(cls):
+        def p(cls):
             return Fp.degree()
 
         @classmethod
@@ -122,7 +124,7 @@ def poly_ring(Fp):
 
             while rhs.degree<=reminder.degree and not reminder.is_zero():
                 divisor = reminder.coeffs[0] / rhs.coeffs[0]
-                padding = (0,)*(reminder.degree-rhs.degree)
+                padding = (Fp(0),)*(reminder.degree-rhs.degree)
                 shifted =  cls(rhs.coeffs+padding)
                 temp = cls([ divisor*x for x in shifted.coeffs ])
                 quotient += cls((divisor,)+padding)

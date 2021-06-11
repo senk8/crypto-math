@@ -2,98 +2,81 @@ from galois_fields import GF
 from poly_ring import poly_ring
 import pytest
 
-@pytest.fixture
-def setup():
-    F7 = GF(7)
-    R7 = poly_ring(F7)
-    return R7
+def r_setup(p):
+    F = GF(p)
+    R = poly_ring(F)
+    return R
 
-@pytest.mark.parametrize('x,y,expect',[
-    ([1,1,1,1],[2,3,1],[1,3,4,2]),
-    ([2,3,1],[6,1,3,1],[6,3,6,2]),
-    ([1,1,1,1],[6,1,3,1],[2,4,2]),
+@pytest.mark.parametrize('p,x,y,expect',[
+    (7,[1,1,1,1],[2,3,1],[1,3,4,2]),
+    (7,[2,3,1],[6,1,3,1],[6,3,6,2]),
+    (7,[1,1,1,1],[6,1,3,1],[2,4,2]),
 ])
-def test_add(setup,x,y,expect):
-    R7 = setup
+def test_add(p,x,y,expect):
+    R = r_setup(p)
 
-    x = R7(x)
-    y = R7(y)
+    x = R(x)
+    y = R(y)
 
-    assert x+y == R7(expect)
+    assert x+y == R(expect)
 
-@pytest.mark.parametrize('x,y,expect',[
-    ([1,1,1,1],[2,3,1],[1,6,5,0]),
-    ([2,3,1],[6,1,3,1],[1,1,0,0]),
-    ([1,1,1,1],[6,1,3,1],[2,0,5,0]),
+@pytest.mark.parametrize('p,x,y,expect',[
+    (7,[1,1,1,1],[2,3,1],[1,6,5,0]),
+    (7,[2,3,1],[6,1,3,1],[1,1,0,0]),
+    (7,[1,1,1,1],[6,1,3,1],[2,0,5,0]),
 ])
-def test_sub(setup,x,y,expect):
-    R7 = setup
+def test_sub(p,x,y,expect):
+    R = r_setup(p)
 
-    x = R7(x)
-    y = R7(y)
+    x = R(x)
+    y = R(y)
 
-    assert x-y == R7(expect)
+    assert x-y == R(expect)
 
-@pytest.mark.parametrize('x,y,expect',[
-    ([1,1,0],[3,2],[3,5,2,0]),
-    ([1,1],[1,3,6],[1,4,2,6]),
-    ([1,1,1,1],[2,3,1],[2,5,6,6,4,1]),
-    ([2,3,1],[6,1,3,1],[5,6,1,5,6,1]),
-    ([1,1,1,1],[6,1,3,1],[6,0,3,4,5,4,1]),
+@pytest.mark.parametrize('p,x,y,expect',[
+    (7,[1,1,0],[3,2],[3,5,2,0]),
+    (7,[1,1],[1,3,6],[1,4,2,6]),
+    (7,[1,1,1,1],[2,3,1],[2,5,6,6,4,1]),
+    (7,[2,3,1],[6,1,3,1],[5,6,1,5,6,1]),
+    (7,[1,1,1,1],[6,1,3,1],[6,0,3,4,5,4,1]),
 ])
-def test_mul(setup,x,y,expect):
-    R7 = setup
+def test_mul(p,x,y,expect):
+    R = r_setup(p)
 
-    x = R7(x)
-    y = R7(y)
+    x = R(x)
+    y = R(y)
 
-    assert x*y == R7(expect)
+    assert x*y == R(expect)
 
 
-@pytest.mark.parametrize('x,y,expect1,expect2',[
-    ([1,1,1,1],[2,3,1],[4,5],[3,3]),
-    ([2,3,1],[3,3],[3,5],[0]),
+@pytest.mark.parametrize('p,x,y,expect1,expect2',[
+    (7,[1,1,1,1],[2,3,1],[4,5],[3,3]),
+    (7,[2,3,1],[3,3],[3,5],[0]),
 ])
-def test_division(setup,x,y,expect1,expect2):
-    R7 = setup
+def test_division(p,x,y,expect1,expect2):
+    R = r_setup(p)
 
-    x = R7(x)
-    y = R7(y)
-    q,r = R7.division(x,y)
+    x = R(x)
+    y = R(y)
+    q,r = R.division(x,y)
 
-    assert q == R7(expect1)
-    assert r == R7(expect2)
+    assert q == R(expect1)
+    assert r == R(expect2)
 
 
-@pytest.mark.parametrize('x,MOD,one',[
-    ([1,1,1,1],[1,0,5,4,3],[1]),
-    ([2,3,1],[1,0,5,4,3],[1]),
-    ([2,3,1],[1,0,5,4,3],[1]),
+@pytest.mark.parametrize('p,x,MOD,one',[
+    (7,[1,1,1,1],[1,0,5,4,3],[1]),
+    (7,[2,3,1],[1,0,5,4,3],[1]),
+    (7,[2,3,1],[1,0,5,4,3],[1]),
 ])
-def test_ext_euclid(setup,x,MOD,one):
-    R7 = setup
+def test_ext_euclid(p,x,MOD,one):
+    R = r_setup(p)
     
-    x = R7(x)
-    MOD = R7(MOD)
+    x = R(x)
+    MOD = R(MOD)
 
     # make sure is inverse
-    gcd,e,_ = R7.ext_euclid(x,MOD)
-    _,r = R7.division(e*x,MOD)
-    assert gcd == R7(one)
-    assert r == R7(one)
-
-
-'''
-
-def test_gcd(setup):
-    R7 = setup
-
-    # make sure gcd poly
-    gcd,q,r = R7.ext_euclid(x,y)
-    assert gcd == R7([1,1])
-
-    # make sure inverse
-    gcd,a,_ = R7.ext_euclid(x,MOD)
-    assert a == R7([6,0,0,6])
-
-'''
+    gcd,e,_ = R.ext_euclid(x,MOD)
+    _,r = R.division(e*x,MOD)
+    assert gcd == R(one)
+    assert r == R(one)
