@@ -55,7 +55,7 @@ def test_mul(setup,x,y,expect):
     ([2,3,1],[6,1,3,1],[0,6,5,4]),
     ([1,1,1,1],[6,1,3,1],[2,5,1,5]),
 ])
-def test_div(setup,x,y,expect):
+def test_division(setup,x,y,expect):
     F7_4 = setup
 
     x = F7_4(x)

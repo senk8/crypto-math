@@ -1,6 +1,9 @@
+from re import A
 from galois_fields import GF
 from poly_ring import poly_ring
 import pytest
+import numpy as np
+import random
 
 def r_setup(p):
     F = GF(p)

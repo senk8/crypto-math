@@ -95,8 +95,11 @@ def field_extension(Fp,ord:int):
                 res = tuple([x-y for (x,y) in zip(self.coeffs,filled)])
             return ExField(res[mu.find_non_zero_index(res):])
 
-        @lru_cache(maxsize=4096)
         def __mul__(self, other):
+            import numpy as np
+            _,r = PR.division(PR(tuple(np.poly1d(self.coeffs)*np.poly1d(other.coeffs))),PR(MOD))
+            return ExField(r.coeffs)
+            '''
             d = self.degree+other.degree
 
             new_coeffs = [Fp(0)]*(d+1)
@@ -110,11 +113,11 @@ def field_extension(Fp,ord:int):
 
             _,r = PR.division(PR(tuple(new_coeffs)),PR(MOD))
             return ExField(r.coeffs)
+            '''
         
         def __truediv__(self,other)->Fp:
             return self*other.inverse()
 
-        @lru_cache(maxsize=100)
         def __pow__(self, exp):
             res=ExField.one()
             for _ in range(exp):
@@ -122,7 +125,7 @@ def field_extension(Fp,ord:int):
             return res 
 
         def inverse(self):
-            gcd, e, f = PR.ext_euclid(self,ExField(MOD))
+            gcd, e, _ = PR.ext_euclid(self,ExField(MOD))
             if not gcd.is_one():
                 return ExField.zero()
             else:
@@ -153,10 +156,6 @@ def field_extension(Fp,ord:int):
         def order(cls):
             return ord
 
-        @classmethod
-        def p(cls):
-            return Fp.degree()
-        
     return ExField
 
 
