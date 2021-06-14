@@ -23,9 +23,8 @@ def test_add_random(p):
     R = r_setup(p)
 
     for _ in range(10**2):
-        n = random.randint(1,10**2)
-        x = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
-        y = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
+        x = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,10**2))])
+        y = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,10**2))])
         actual = R(x.coeffs)+R(y.coeffs)
         expect = R((x+y).coeffs)
 
@@ -45,9 +44,8 @@ def test_sub_random(p):
     R = r_setup(p)
 
     for _ in range(10**2):
-        n = random.randint(1,10**2)
-        x = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
-        y = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
+        x = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,10**2))])
+        y = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,10**2))])
         actual = R(x.coeffs)-R(y.coeffs)
         expect = R((x-y).coeffs)
 
@@ -68,9 +66,8 @@ def test_mul_random(p):
     R = r_setup(p)
 
     for _ in range(10**2):
-        n = random.randint(1,10**2)
-        x = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
-        y = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
+        x = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,10**2))])
+        y = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,10**2))])
         actual = R(x.coeffs)*R(y.coeffs)
         expect = R((x*y).coeffs)
 

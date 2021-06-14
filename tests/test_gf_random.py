@@ -9,30 +9,40 @@ def g_setup(p,n):
     return EF
 
 @pytest.mark.parametrize('p,n',[
-    (7,4),
+    (2,2),
+    (3,3),
+    (5,4),
+    (7,5),
+    (11,6),
+    (101,7),
+    (65537,8),
 ])  
 def test_add_ramdom(p,n):
     EF = g_setup(p,n)
 
     for _ in range(10**2):
-        n = random.randint(0,10**2)
-        x = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
-        y = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
+        x = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,n+1))])
+        y = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,n+1))])
         actual = EF(list(x.coeffs))+EF(list(y.coeffs))
         expect = EF(list((x+y).coeffs))
 
         assert actual == expect 
 
 @pytest.mark.parametrize('p,n',[
-    (7,4),
-])  
+    (2,2),
+    (3,3),
+    (5,4),
+    (7,5),
+    (11,6),
+    (101,7),
+    (65537,8),
+])   
 def test_sub_random(p,n):
     EF = g_setup(p,n)
 
     for _ in range(10**2):
-        n = random.randint(0,10**2)
-        x = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
-        y = np.poly1d([ random.randint(0,10**2) for _ in range(n)])
+        x = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,n+1))])
+        y = np.poly1d([ random.randint(0,10**2) for _ in range(random.randint(1,n+1))])
         actual = EF(list(x.coeffs))-EF(list(y.coeffs))
         expect = EF(list((x-y).coeffs))
 
@@ -52,14 +62,11 @@ def test_mul_random(p,MOD):
     EF = g_setup(p,len(MOD)-1)
     
     for _ in range(10**2):
-        n = random.randint(0,len(MOD)-1)
-        x = np.poly1d([ random.randint(0,10) for _ in range(n)])
-        y = np.poly1d([ random.randint(0,10) for _ in range(n)])
+        x = np.poly1d([ random.randint(0,10) for _ in range(random.randint(1,len(MOD)-1))])
+        y = np.poly1d([ random.randint(0,10) for _ in range(random.randint(1,len(MOD)-1))])
         mod = np.poly1d(MOD)
         _,expect = (x*y)/mod
         actual = EF(x.coeffs)*EF(y.coeffs)
-        print(expect)
-        print(actual)
         assert EF(expect.coeffs) == actual
 
 

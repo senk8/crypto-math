@@ -2,6 +2,7 @@ from __future__ import annotations
 import math_util as mu
 import poly_ring as pr
 from functools import lru_cache
+import fft
 
 MODS = [(1),(1),(1,1,1),(1,0,1,1),(1,0,0,1,1),(1,0,0,1,0,1),(1,0,1,1,0,1,1),(1,0,0,0,0,0,1,1),(1,0,0,0,1,1,1,0,1)]
 
@@ -9,6 +10,9 @@ def GF(MOD):
 
     # closure
     class Fp(int):
+        cardinality = MOD
+        degree = MOD
+
         def __new__(self,num:int)->Fp:
             return int.__new__(self,num%MOD)
 
@@ -32,14 +36,6 @@ def GF(MOD):
 
         def inverse(self)->Fp:
             return pow(self,MOD-2)
-
-        @classmethod
-        def degree(cls)->int:
-            return MOD
-
-        @classmethod
-        def cardinality(cls)->int:
-            return cls.degree()
 
         @classmethod
         def zero(cls):
@@ -74,6 +70,8 @@ def field_extension(Fp,ord:int):
     #MOD:Tuple[int] =MODS[ord]
 
     class ExField(PR):
+        order = ord
+        cardinality = Fp.degree**order
         def __init__(self,coeffs):
             super().__init__(coeffs)
 
@@ -96,10 +94,12 @@ def field_extension(Fp,ord:int):
             return ExField(res[mu.find_non_zero_index(res):])
 
         def __mul__(self, other):
-            import numpy as np
-            _,r = PR.division(PR(tuple(np.poly1d(self.coeffs)*np.poly1d(other.coeffs))),PR(MOD))
+            '''
+            new_coeffs = tuple(reversed(fft.fast_fourier_transform(tuple(reversed(self.coeffs)),tuple(reversed(other.coeffs)))))
+            _,r = PR.division(PR(tuple(new_coeffs)),PR(MOD))
             return ExField(r.coeffs)
             '''
+
             d = self.degree+other.degree
 
             new_coeffs = [Fp(0)]*(d+1)
@@ -113,16 +113,9 @@ def field_extension(Fp,ord:int):
 
             _,r = PR.division(PR(tuple(new_coeffs)),PR(MOD))
             return ExField(r.coeffs)
-            '''
         
         def __truediv__(self,other)->Fp:
             return self*other.inverse()
-
-        def __pow__(self, exp):
-            res=ExField.one()
-            for _ in range(exp):
-                res=res*self
-            return res 
 
         def inverse(self):
             gcd, e, _ = PR.ext_euclid(self,ExField(MOD))
@@ -137,24 +130,10 @@ def field_extension(Fp,ord:int):
             else :
                 return self * ExField([self.coeffs[0].inverse()])
 
-        def is_zero(self):
-            return self == ExField.zero()
-
-        def is_one(self):
-            return self == ExField.one()
-
         @classmethod
         def enumerate(cls):
             import itertools
-            return itertools.product(range(Fp.degree()),repeat=cls.order())
-
-        @classmethod
-        def cardinality(cls):
-            return Fp.degree()**cls.order()
-
-        @classmethod
-        def order(cls):
-            return ord
+            return itertools.product(range(cls.p),repeat=cls.order)
 
     return ExField
 

@@ -4,8 +4,8 @@ from functools import lru_cache
 
 def poly_ring(Fp):
     class PolyRing :
+        p = Fp.degree
         def __init__(self,coeffs):
-            self.p = Fp.degree()
             self.coeffs,self.degree = self.preprocess(coeffs,Fp)
  
         def __add__(self, other):
@@ -33,10 +33,6 @@ def poly_ring(Fp):
             return tuple(reversed(fft.fast_fourier_transform(tuple(reversed(self.coeffs)),tuple(reversed(other.coeffs)))))
 
         def multiply_conv(self,other):
-            import numpy as np
-            return tuple(np.poly1d(self.coeffs)*np.poly1d(other.coeffs))
-
-            '''
             d = self.degree+other.degree
 
             new_coeffs = [Fp(0)]*(d+1)
@@ -49,7 +45,6 @@ def poly_ring(Fp):
                     new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
             
             return new_coeffs
-            '''
         
         def __eq__(self, other):
             if self.degree != other.degree:
@@ -78,13 +73,11 @@ def poly_ring(Fp):
             return s.lstrip("+")
 
         
-        def __pow__(self, other):
-            if other == 0:
-                return PolyRing.one()
-            else:
-                for _ in range(other):
-                    self=self*self
-                return self
+        def __pow__(self, exp):
+            res=self.one()
+            for _ in range(exp):
+                res=res*self
+            return res 
 
         def monic(self):
             if self.is_monic():
@@ -96,10 +89,10 @@ def poly_ring(Fp):
             return self.coeffs[0]==1
         
         def is_zero(self):
-            return self == PolyRing.zero()
+            return self == self.zero()
 
         def is_one(self):
-            return self == PolyRing.one()
+            return self == self.one()
 
         def preprocess(self,coeffs,Fp):
             new_coeffs = tuple([ Fp(x) for x in coeffs])
@@ -142,11 +135,7 @@ def poly_ring(Fp):
             nx = cls.zero()
             ny = cls.one()
 
-            #cnt=0
             while not b.is_zero():
-                #print(f"{cnt}:a:{a}:{a.coeffs}")
-                #print(f"{cnt}:b:{b}:{b.coeffs}")
-                #cnt+=1
                 q,r = PolyRing.division(a,b)
 
                 tmpx = x - q*nx
