@@ -2,3 +2,7 @@ __pycache__
 .pytest_cache
 .env/
 .benchmarks
+*.c
+*.cpp
+*.so
+*.o

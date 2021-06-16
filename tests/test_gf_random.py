@@ -49,6 +49,7 @@ def test_sub_random(p,n):
         assert actual == expect 
 
 
+'''
 @pytest.mark.parametrize('p,MOD',[
     (2,(1,1,1)),
     (3,(1,0,2,1)),
@@ -69,4 +70,4 @@ def test_mul_random(p,MOD):
         actual = EF(x.coeffs)*EF(y.coeffs)
         assert EF(expect.coeffs) == actual
 
-
+'''
