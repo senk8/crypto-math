@@ -3,7 +3,7 @@
 This is a full-scratch implementation of an algebraic structure for cryptology.
 
 
-# setup
+# Setup
 
 
 ```
@@ -11,8 +11,10 @@ $ export PYTHONPATH = cypto-math/src
 $ pytest 
 ```
 
+# Feature
 
-# requirement
+
+# Requirement
 
 - Cython
 - Python3
