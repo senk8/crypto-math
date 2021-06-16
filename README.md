@@ -12,3 +12,7 @@ $ pytest
 ```
 
 
+# requirement
+
+- Cython
+- Python3
