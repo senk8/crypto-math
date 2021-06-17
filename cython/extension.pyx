@@ -85,7 +85,7 @@ def field_extension(Fp,ord:int):
 
 
 
-cdef vector[int] mul_helper(d:int,lhs:tuple,rhs:tuple):
+cdef inline vector[int] mul_helper(d:int,lhs:tuple,rhs:tuple):
     cdef:
         int k
         int i
@@ -103,37 +103,3 @@ cdef vector[int] mul_helper(d:int,lhs:tuple,rhs:tuple):
             new_coeffs[d-k] += lhs[ld-i] * rhs[rd-(k-i)]
      
     return new_coeffs
-
-
-def test1():
-    cdef list x
-    x = helper()
-    return x
-
-cdef vector[int] helper():
-    cdef:
-        int i = 0
-        int n  = 1000000
-        vector[int] res
-    res.resize(n)
-    for i in range(n):
-        res[i]=i
-    return res
-
-def test2():
-    cdef int i
-    cdef int n = 1000000
-    return [ i for i in range(n)]
-
-cpdef test3():
-    cdef int i
-    cdef int n = 1000000
-    return [ i for i in range(n)]
-
-cpdef test4():
-    return helper4()
-
-cdef list helper4():
-    cdef int i
-    cdef int n = 1000000
-    return [ i for i in range(n)]

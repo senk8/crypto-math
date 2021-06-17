@@ -6,7 +6,8 @@ def poly_ring(Fp):
     class PolyRing :
         p = Fp.degree
         def __init__(self,coeffs):
-            self.coeffs,self.degree = self.preprocess(coeffs,Fp)
+            self.coeffs = preprocess(coeffs,Fp)
+            self.degree = len(self.coeffs) -1
  
         def __add__(self, other):
             cdef tuple res,filled
@@ -92,13 +93,6 @@ def poly_ring(Fp):
         def is_one(self):
             return self == self.one()
 
-        def preprocess(self,coeffs,Fp):
-            cdef tuple new_coeffs
-            cdef int start
-            new_coeffs = tuple([ Fp(x) for x in coeffs])
-            start = find_non_zero_index(new_coeffs)
-            return new_coeffs[start:],len(new_coeffs[start:])-1
-
         @classmethod
         def zero(cls):
             return cls((0,))
@@ -149,3 +143,10 @@ def poly_ring(Fp):
             return d*a,d*x,d*y
 
     return PolyRing
+
+cdef inline tuple preprocess(coeffs,Fp):
+    cdef tuple new_coeffs
+    cdef int start
+    new_coeffs = tuple([ Fp(x) for x in coeffs])
+    start = find_non_zero_index(new_coeffs)
+    return new_coeffs[start:]
