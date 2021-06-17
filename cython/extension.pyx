@@ -45,8 +45,6 @@ def field_extension(Fp,ord:int):
 
             d = self.degree+other.degree
 
-            '''
-
             new_coeffs = [0]*(d+1)
 
             for k in range(d+1):
@@ -56,8 +54,9 @@ def field_extension(Fp,ord:int):
                     
                     new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
             '''
-
             new_coeffs = mul_helper(d,self.coeffs,other.coeffs)
+            '''
+
             _,r = PR.division(PR(tuple(new_coeffs)),PR(MOD))
             return ExField(r.coeffs)
         
