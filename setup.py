@@ -1,3 +1,4 @@
+from platform import version
 from setuptools import setup,Extension
 from Cython.Build import cythonize
 from Cython.Distutils import build_ext
@@ -13,6 +14,7 @@ ext_modules = [Extension(
 
 setup(
     name="cytpto_math",
+    version="0.0.1",
     ext_modules = cythonize(ext_modules),
     cmdclass={"build_ext": build_ext}
 )

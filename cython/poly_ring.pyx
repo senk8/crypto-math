@@ -30,19 +30,8 @@ def poly_ring(Fp):
             return PolyRing(res)
 
         def __mul__(self, other):
-            cdef int d,k,i
             cdef list new_coeffs
-
-            d = self.degree+other.degree
-            new_coeffs = [Fp(0)]*(d+1)
-
-            for k in range(d+1):
-                for i in range(k+1):
-                    if self.degree-i < 0 or other.degree- (k - i) < 0:
-                        continue
-                    
-                    new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
-            
+            new_coeffs = mul_helper(self.coeffs,other.coeffs)
             return PolyRing(new_coeffs)
        
         def __eq__(self, other):

@@ -1,6 +1,4 @@
 import itertools
-from libcpp.vector cimport vector
-#import math_util as mu
 
 def field_extension(Fp,ord:int):
     cdef:
@@ -40,24 +38,9 @@ def field_extension(Fp,ord:int):
             return ExField(res)
 
         def __mul__(self, other):
-            cdef int d,i,k
             cdef list new_coeffs
-
-            d = self.degree+other.degree
-
-            new_coeffs = [0]*(d+1)
-
-            for k in range(d+1):
-                for i in range(k+1):
-                    if self.degree-i < 0 or other.degree- (k - i) < 0:
-                        continue
-                    
-                    new_coeffs[d-k] += self.coeffs[self.degree-i] * other.coeffs[other.degree-(k-i)]
-            '''
-            new_coeffs = mul_helper(d,self.coeffs,other.coeffs)
-            '''
-
-            _,r = PR.division(PR(tuple(new_coeffs)),PR(MOD))
+            new_coeffs = mul_helper(self.coeffs,other.coeffs)
+            _,r = PR.division(PR(new_coeffs),PR(MOD))
             return ExField(r.coeffs)
         
         def __truediv__(self,other):
@@ -84,21 +67,3 @@ def field_extension(Fp,ord:int):
 
 
 
-cdef inline vector[int] mul_helper(d:int,lhs:tuple,rhs:tuple):
-    cdef:
-        int k
-        int i
-        vector[int] new_coeffs
-        int ld = len(lhs) - 1
-        int rd = len(rhs) - 1
-    
-    new_coeffs.resize(d)
-    
-    for k in range(d+1):
-        for i in range(k+1):
-            if ld-i < 0 or rd- (k - i) < 0:
-                continue
-                    
-            new_coeffs[d-k] += lhs[ld-i] * rhs[rd-(k-i)]
-     
-    return new_coeffs
