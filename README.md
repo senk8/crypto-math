@@ -24,3 +24,4 @@ $ python3 setup.py install
 
 - Cython
 - Python3
+- numpy
