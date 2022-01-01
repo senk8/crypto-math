@@ -17,7 +17,7 @@ def poly_ring(Fp):
             else :
                 filled=padding(other.coeffs,self.degree,Fp)
                 res = tuple([x+y for (x,y) in zip(self.coeffs,filled)])
-            return PolyRing(res)
+            return self.__class__(res)
 
         def __sub__(self, other):
             cdef tuple res,filled
@@ -27,7 +27,7 @@ def poly_ring(Fp):
             else :
                 filled=padding(other.coeffs,self.degree,Fp)
                 res = tuple([x-y for (x,y) in zip(self.coeffs,filled)])
-            return PolyRing(res)
+            return self.__class__(res)
 
         def __mul__(self, other):
             cdef list new_coeffs
@@ -71,7 +71,7 @@ def poly_ring(Fp):
             if self.is_monic():
                 return self
             else :
-                return self * PolyRing([self.coeffs[0].inverse()])
+                return self * self.__class__([self.coeffs[0].inverse()])
 
         def is_monic(self):
             return self.coeffs[0]==1

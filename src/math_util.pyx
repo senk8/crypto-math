@@ -21,9 +21,6 @@ def enc(poly,Range=int):
     res = enc_helper(poly.coeffs,poly.degree,poly.p)
     return Range(res)
 
-cdef inline int enc_helper(coeffs:tuple,degree:int,p:int):
-    return sum([int(x)*(p**i)for i,x in zip(range(degree,-1,-1),coeffs)])
-
 def enc_into_poly(n,Range):
     coeffs = []
     while n != 0:
@@ -38,6 +35,9 @@ def enc2(poly,Range=int):
 
 cdef inline int enc_helper2(coeffs:tuple,degree:int,p:int):
     return np.dot([ p**i for i in range(degree,-1,-1)],coeffs)
+
+cdef inline int enc_helper(coeffs:tuple,degree:int,p:int):
+    return sum([int(x)*(p**i)for i,x in zip(range(degree,-1,-1),coeffs)])
 
 '''
 def dec(num:int,Range,p:int):

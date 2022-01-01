@@ -29,14 +29,6 @@ def GF(MOD:int):
 
         def inverse(self):
             return pow(self,MOD-2)
-
-        @classmethod
-        def zero(cls):
-            return cls(0)
-
-        @classmethod
-        def one(cls):
-            return cls(1)
         
         @classmethod
         def enumerate(cls):

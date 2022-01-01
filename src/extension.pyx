@@ -22,26 +22,6 @@ def field_extension(Fp,ord:int):
         def __init__(self,coeffs):
             super().__init__(coeffs)
 
-        def __add__(self, other):
-            cdef tuple res
-            if self.degree < other.degree:
-                filled=padding(self.coeffs,other.degree,Fp)
-                res = tuple([x+y for (x,y) in zip(filled,other.coeffs)])
-            else :
-                filled=padding(other.coeffs,self.degree,Fp)
-                res = tuple([x+y for (x,y) in zip(self.coeffs,filled)])
-            return ExField(res)
-
-        def __sub__(self, other):
-            cdef tuple res
-            if self.degree < other.degree:
-                filled=padding(self.coeffs,other.degree,Fp)
-                res = tuple([x-y for (x,y) in zip(filled,other.coeffs)])
-            else :
-                filled=padding(other.coeffs,self.degree,Fp)
-                res = tuple([x-y for (x,y) in zip(self.coeffs,filled)])
-            return ExField(res)
-
         def __mul__(self, other):
             cdef list new_coeffs
             new_coeffs = mul_helper(self.coeffs,other.coeffs)
@@ -57,12 +37,6 @@ def field_extension(Fp,ord:int):
                 return ExField.zero()
             else:
                 return e
-
-        def monic(self):
-            if self.is_monic():
-                return self
-            else :
-                return self * ExField([self.coeffs[0].inverse()])
 
         def encode(self):
             return np.dot(self.v[:self.degree+1],self.coeffs)
