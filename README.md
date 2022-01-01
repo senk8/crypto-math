@@ -26,3 +26,4 @@ For example, F_p^n. we call p degree, and call n order.
 
 - Cython
 - Python3
+- numpy
