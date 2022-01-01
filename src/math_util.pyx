@@ -1,3 +1,5 @@
+import numpy as np
+
 def find_non_zero_index(seq):
     for i,x in enumerate(seq):
         if x!=0:
@@ -13,3 +15,42 @@ def padding(coeffs,n,Fp=int):
 
 def pow_2_at_least(d):
     return 1 << len(bin(d))-2
+
+def enc(poly,Range=int):
+    cdef int res
+    res = enc_helper(poly.coeffs,poly.degree,poly.p)
+    return Range(res)
+
+cdef inline int enc_helper(coeffs:tuple,degree:int,p:int):
+    return sum([int(x)*(p**i)for i,x in zip(range(degree,-1,-1),coeffs)])
+
+def enc_into_poly(n,Range):
+    coeffs = []
+    while n != 0:
+        coeffs.append(n%2)
+        n//=2
+    return Range(tuple(coeffs))
+
+def enc2(poly,Range=int):
+    cdef int res
+    res = enc_helper(poly.coeffs,poly.degree,poly.p)
+    return Range(res)
+
+cdef inline int enc_helper2(coeffs:tuple,degree:int,p:int):
+    return np.dot([ p**i for i in range(degree,-1,-1)],coeffs)
+
+'''
+def dec(num:int,Range,p:int):
+    coeffs = dec_helper(num,p)
+    return Range(coeffs)
+
+cdef vector[int] dec_helper(num:int,p:int):
+    cdef:
+        vector[int] coeffs
+
+    coeffs.resize()
+    while num > 0:
+        coeffs = [num%p]+coeffs
+        num //= p
+    return coeffs
+'''
