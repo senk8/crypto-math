@@ -1,4 +1,4 @@
-from galois_fields import GF,field_extension
+from crypto_math import GF,field_extension
 import pytest
 import random
 import numpy as np

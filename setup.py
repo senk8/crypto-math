@@ -6,7 +6,7 @@ from Cython.Distutils import build_ext
 ext_modules = [Extension(
     # The cython file should always contain the same name as the extension module name.
     "crypto_math",sources=[
-        "cython/crypto_math.pyx",
+        "src/crypto_math.pyx",
     ],
     language="c++",
 ),

@@ -1,4 +1,5 @@
-from crypto_math import GF,poly_ring
+from galois_fields import GF
+from poly_ring import poly_ring
 import pytest
 import numpy as np
 import random

@@ -1,4 +1,4 @@
 python3 setup.py build_ext --inplace
-cd cython
+cd src
 rm *.cpp
 rm *.c
