@@ -80,6 +80,26 @@ def test_division(p, x, y, expect1, expect2):
     assert q == R(expect1)
     assert r == R(expect2)
 
+@pytest.mark.parametrize(
+    "p,x,exp,expect",
+    [
+        (7, [1], 5, [1]),
+        (7, [1, 5], 2, [1, 3, 4]),
+        (7, [2, 5], 4, [2, 6, 5, 6, 2]),
+        (7, [1, 5], 5, [1, 4, 5, 4, 3, 3]),
+        (7, [1, 0], 5, [1, 0, 0, 0, 0, 0]),
+        (7, [3, 2, 1], 5, [5, 5, 1, 1, 1, 2, 5, 4, 6, 3, 1]),
+        (7, [1, 5, 4], 3, [1, 1, 3, 0, 5, 2, 1])
+    ],
+)
+def test_pow(p, x, exp, expect):
+    R = r_setup(p)
+    x = R(x)
+    actual = x ** exp
+
+    # make sure is inverse
+    assert actual == R(expect)
+
 
 @pytest.mark.parametrize(
     "p,x,MOD,one",
