@@ -47,4 +47,12 @@ def GF(MOD: int):
                     if i == MOD - 2:
                         return g_
 
+        @classmethod
+        def one(cls):
+            return Fp(1)
+        
+        @classmethod
+        def zero(cls):
+            return Fp(0)
+
     return Fp

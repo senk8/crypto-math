@@ -1,4 +1,4 @@
-import galois_fields as gf
+import crypto_math as gf
 import pytest
 
 ITERATION = 10**4

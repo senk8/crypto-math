@@ -1,5 +1,5 @@
-from galois_fields import GF
-from poly_ring import poly_ring
+from crypto_math import GF
+from crypto_math import poly_ring
 import pytest
 
 @pytest.fixture
