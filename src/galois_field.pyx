@@ -3,7 +3,6 @@ def GF(MOD: int):
         int cardinality
         int degree
 
-    # closure
     class Fp(int):
         cardinality = MOD
         degree = MOD
@@ -40,7 +39,6 @@ def GF(MOD: int):
             cdef int g,i
             for g in range(1, MOD):
                 g_ = cls(g)
-                # MOD-1まで1にならなければ
                 for i in range(1, MOD - 1):
                     if g_ ** i == cls.one():
                         break

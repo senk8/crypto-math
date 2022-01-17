@@ -1,7 +1,6 @@
 import itertools
 import numpy as np
 
-
 def field_extension(Fp, ord: int):
     cdef:
         int order

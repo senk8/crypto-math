@@ -12,8 +12,9 @@ ext_modules = [Extension(
 ]
 
 setup(
-    name="cytpto_math",
-    version="0.0.1",
+    name="crypto_math",
+    version="0.0.2",
     ext_modules = cythonize(ext_modules),
-    cmdclass={"build_ext": build_ext}
+    cmdclass={"build_ext": build_ext},
+    install_require = ["numpy","gmpy2","sympy"]
 )
