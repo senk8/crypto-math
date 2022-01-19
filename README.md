@@ -3,7 +3,15 @@
 This is a full-scratch implementation of an algebraic structure for cryptology.
 
 
-# Setup
+# Setup (Mac)
+
+Install required libraries.
+
+```
+brew install gmp
+pip install gmpy 
+```
+
 
 Building Cython 
 
@@ -27,3 +35,4 @@ For example, F_p^n. we call p degree, and call n order.
 - Cython
 - Python3
 - numpy
+- gmpy
