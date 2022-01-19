@@ -4,9 +4,9 @@
 # but include it by pasting the contents of the file as it is, just like in C.
 
 include "helper.pyx"
-include "math_util.pyx"
+include "util.pyx"
 include "galois_field.pyx"
-include "extension.pyx"
 include "poly_ring.pyx"
+include "extension.pyx"
 include "windowing.pyx"
 include "prime.pyx"
