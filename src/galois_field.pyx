@@ -8,27 +8,35 @@ def GF(MOD: int):
         degree = MOD
 
         def __new__(self, num: int):
-            return int.__new__(self, num % MOD)
+            r = gmp_mod(num, MOD)
+            return int.__new__(self, r)
 
         def __add__(self, other):
-            return Fp(super().__add__(other) % MOD)
+            res = gmp_add(self, other)
+            return Fp(res)
 
         def __sub__(self, other):
-            return Fp(super().__sub__(other) % MOD)
+            res = gmp_sub(self, other)
+            return Fp(res)
 
         def __mul__(self, other):
-            return Fp(super().__mul__(other) % MOD)
+            res = gmp_mul(self, other)
+            return Fp(res)
 
         def __truediv__(self, other):
-            return Fp(super().__mul__(pow(other, MOD - 2)) % MOD)
+            e = Fp(other).inverse()
+            res = gmp_mul(self, e)
+            return Fp(res)
 
         def __pow__(self, exp: int):
-            cdef int g = int(self)
-            res = pow(g,exp,MOD)
+            if exp == -1:
+                return self.inverse()
+            res = gmp_pow(self, exp, MOD)
             return Fp(res)
 
         def inverse(self):
-            return pow(self, MOD - 2)
+            res = gmp_invert(self, MOD)
+            return Fp(res)
 
         @classmethod
         def enumerate(cls):
