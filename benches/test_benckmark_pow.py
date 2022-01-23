@@ -1,10 +1,11 @@
-import crypto_math as gf
+from crypto_math import get_safe_prime, GF, init_windowing
 import pytest
+
+p = get_safe_prime(1024)
 
 @pytest.fixture
 def setup():
-    p = gf.get_safe_prime(1024)
-    F = gf.GF(p)
+    F = GF(p)
     return F
 
 def test_pow_binary(setup,benchmark):
@@ -19,7 +20,7 @@ def test_pow_windowing(setup,benchmark):
 
     s = F.degree - 1
     g = F.generator()
-    f = gf.init_windowing(g,4,2**1024)
+    f = init_windowing(g,4,2**1024)
     benchmark(lambda s:f(s),s)
 
 
