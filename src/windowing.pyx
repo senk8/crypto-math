@@ -12,7 +12,6 @@ def decimal_to_list_with_base(n, base, t):
 
     return res
 
-
 # h**(t+1) までの値を計算できる
 # h**l
 def init_windowing(g, h, l): 
@@ -29,14 +28,13 @@ def init_windowing(g, h, l):
     # t + h - 2
     def f(exp):
         es = decimal_to_list_with_base(exp, b, t)
-        A = 1
-        B = 1
+        A = g.one()
+        B = g.one()
         for j in range(h-1, 0, -1):
             for i,e in enumerate(es):
                 if e == j:
                     B *= gs[i]
             A *= B 
-
         return A
 
     return f
