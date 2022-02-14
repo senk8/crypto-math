@@ -1,3 +1,6 @@
+from gmpy2 cimport *
+from gmpy2 import mpz
+
 def GF(MOD: int):
     cdef:
         int cardinality
@@ -59,13 +62,30 @@ def GF(MOD: int):
             def f(exp):
                 cdef:
                     int j, i, e
-                    vector[int] es = encode_to_list_by_base(mpz(exp), b, l)
+                    vector[int] es = encode_bit_list(mpz(exp), b, l)
                     mpz res = GMPy_MPZ_New(NULL)
 
                 helper_windowing(res, h, mod, es, gs)
                 return int(res)
 
             return f
+
+        def power(self, n):
+            cdef:
+                mpz x_ = mpz(1)
+                mpz a_ = mpz(self)
+                mpz n_ = mpz(n)
+                mpz mod = mpz(MOD)
+
+            while n_:
+                if n_ & 1:
+                    mpz_mul(MPZ(x_) , MPZ(x_) , MPZ(a_))
+                    mpz_mod(MPZ(x_) , MPZ(x_) , MPZ(mod))
+                n_ >>= 1
+                mpz_mul(MPZ(a_) , MPZ(a_) , MPZ(a_))
+                mpz_mod(MPZ(a_) , MPZ(a_), MPZ(mod))
+
+            return int(x_)
 
 
         @classmethod

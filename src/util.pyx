@@ -1,4 +1,7 @@
 import numpy as np
+import math
+cimport cython
+from libcpp.vector cimport vector
 
 def find_non_zero_index(seq):
     for i, x in enumerate(seq):
@@ -23,6 +26,20 @@ def enc(poly, Range=int):
 
 cdef inline int enc_helper(coeffs:tuple,degree:int,p:int):
     return sum([int(x)*(p**i)for i,x in zip(range(degree,-1,-1),coeffs)])
+
+cdef inline vector[int] decimal_to_list_with_base(n, int base, int l):
+    cdef: 
+        int i
+        vector[int] res
+
+    res.resize(l)
+    for i in range(0,l):
+        res[i] = n%base
+        n //= base
+        if 0 >= n:
+            break 
+
+    return res
 
 """
 def enc_into_poly(n, Range):

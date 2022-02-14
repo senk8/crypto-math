@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-import math
-cimport cython
-from libcpp.vector cimport vector
-
-from gmpy2 import mpz
-from gmpy2 cimport *
 
 """
 # h**l までの値を計算できる
@@ -47,30 +41,11 @@ def windowing(exp ,int l, int b, list gs):
                 B *= gs[i]
         A *= B 
     return A
-"""
-
-cdef inline vector[int] decimal_to_list_with_base(n, int base, int l):
-    cdef: 
-        int i
-        vector[int] res
-
-    res.resize(l)
-    for i in range(0,l):
-        res[i] = n%base
-        n //= base
-        if 0 >= n:
-            break 
-
-    return res
-
 
 
 
 # h**l までの値を計算できる
 def init_windowing(g, p, int h, int l): 
-    """
-        m = range of value. For example, you would like to include 1024bit number, then you specify m = 2**1024;
-    """
     cdef: 
         int b = h
         int i 
@@ -95,3 +70,4 @@ def init_windowing(g, p, int h, int l):
         return int(res)
 
     return f
+"""
